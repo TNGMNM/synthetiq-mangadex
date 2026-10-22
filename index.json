@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "modules": [
+    {
+      "id": "mangadex-unofficial",
+      "familyID": "mangadex-unofficial",
+      "name": "MangaDex (Unofficial)",
+      "version": "0.1.0",
+      "language": "en",
+      "contentType": "pageImages",
+      "contentRating": "suggestive",
+      "releaseTrack": "beta",
+      "status": "active",
+      "icon": {
+        "path": "modules/mangadex/icon.png",
+        "sha256": "c098cf44ac13c2a5d530854eea11939a5b2d80e24abf65974dc9f87d67b286d0"
+      },
+      "manifest": {
+        "path": "modules/mangadex/manifest.json",
+        "sha256": "0e23ef2ae2a1b92c0260b72fc09a9dc8a56ad01d83cd142782301d0ccde37fb1"
+      }
+    }
+  ]
+}
