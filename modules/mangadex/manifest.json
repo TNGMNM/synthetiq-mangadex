@@ -34,7 +34,9 @@
   },
   "id": "mangadex-unofficial",
   "language": "en",
-  "limits": {
+"legacyIDs": [],
+"isFlagship": false,
+"limits": {
     "cacheTTLSeconds": 300,
     "maxConcurrentRequests": 2,
     "maxResponseBytes": 2097152,
