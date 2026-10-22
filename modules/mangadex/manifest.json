@@ -47,6 +47,6 @@
   "name": "MangaDex (Unofficial)",
   "releaseTrack": "beta",
   "status": "active",
-  "universalLink": "https://mangadex.org",
+  "universalLink": "https://github.com/TNGMNM/synthetiq-mangadex/tree/main/modules/mangadex",
   "version": "0.1.0"
 }
