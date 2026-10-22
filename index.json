@@ -1,6 +1,14 @@
+
 {
   "generatedAt": "2026-10-23T00:00:00Z",
   "schemaVersion": 1,
+  "repository": {
+    "id": "tngmnm.mangadex",
+    "name": "MangaDex Unofficial",
+    "owner": "TNGMNM",
+    "homepage": "https://github.com/TNGMNM/synthetiq-mangadex",
+    "universalLink": "https://mangadex.org"
+  },
   "modules": [
     {
       "id": "mangadex-unofficial",
