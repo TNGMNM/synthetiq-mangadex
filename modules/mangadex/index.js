@@ -1,0 +1,18 @@
+"use strict";
+(() => {
+ const API="https://api.mangadex.org", COVER="https://uploads.mangadex.org";
+ const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ const validate=x=>{const s=String(x||'').split('/').filter(Boolean).pop();if(!UUID.test(s))throw Error('Invalid MangaDex identifier');return s;};
+ const localized=o=>o?.en||Object.values(o||{})[0]||'';
+ const params=o=>Object.entries(o).flatMap(([k,v])=>Array.isArray(v)?v.map((x,i)=>`${encodeURIComponent(k)}%5B%5D=${encodeURIComponent(x)}`):[`${encodeURIComponent(k)}=${encodeURIComponent(v)}`]).join('&');
+ async function get(path,query={}) {if(typeof globalThis.fetchv2!=='function')throw Error('Synthetiq fetchv2 is required');const url=`${API}${path}${Object.keys(query).length?'?'+params(query):''}`;const r=await globalThis.fetchv2(url,{Accept:'application/json'},'GET',null,{followRedirects:true,maxBytesHint:2097152,responseClass:'json'});if(!r||r.bodyDropped||r.ok===false||(r.status&&r.status>=400))throw Error(`MangaDex API error ${r?.status||'network'}`);const data=typeof r.json==='function'?await r.json():JSON.parse(typeof r.body==='string'?r.body:await r.text());if(data.result==='error')throw Error(data.errors?.[0]?.detail||'MangaDex API error');return data;}
+ function card(m){const a=m.attributes||{};const c=m.relationships?.find(x=>x.type==='cover_art');const file=c?.attributes?.fileName;return {id:m.id,href:`https://mangadex.org/title/${m.id}`,title:localized(a.title),image:file?`${COVER}/covers/${m.id}/${encodeURIComponent(file)}.256.jpg`:'',description:localized(a.description),status:a.status||'',genres:(a.tags||[]).map(t=>localized(t.attributes?.name)).filter(Boolean)};}
+ async function searchResults(query,page=1){const offset=(Math.max(1,Number(page)||1)-1)*32;const url=`/manga?${params({limit:32,offset,title:String(query||''),includes:['cover_art'],contentRating:['safe','suggestive']})}`;
+ const data=await get(url);return {items:(data.data||[]).map(card),hasMore:offset+(data.data||[]).length<(data.total||0)};}
+ async function extractDetails(id){const m=(await get(`/manga/${validate(id)}`,{includes:['cover_art','author','artist']})).data;const c=card(m);return {...c,author:(m.relationships||[]).filter(x=>x.type==='author').map(x=>x.attributes?.name).filter(Boolean).join(', ')};}
+ async function extractChapters(id){const manga=validate(id),out=[];let offset=0;while(offset<10000){const data=await get(`/manga/${manga}/feed`,{limit:100,offset,translatedLanguage:['en'],order:{}});const rows=data.data||[];for(const c of rows)out.push({id:c.id,title:c.attributes?.title||`Chapter ${c.attributes?.chapter||'?'}`,number:c.attributes?.chapter||'',language:c.attributes?.translatedLanguage||'en',releaseDate:c.attributes?.publishAt||'',href:`https://mangadex.org/chapter/${c.id}`});offset+=rows.length;if(!rows.length||offset>=data.total)break;}return out;}
+ async function extractImages(id){const data=await get(`/at-home/server/${validate(id)}`);const hash=data.chapter?.hash;const files=data.chapter?.data||[];if(!hash||!data.baseUrl)throw Error('No chapter pages returned');return files.map(f=>`${data.baseUrl}/data/${hash}/${encodeURIComponent(f)}`);}
+ async function discoveryHome(){const result=await searchResults('',1);return {sections:[{id:'latest',title:'MangaDex catalogue',items:result.items}]};}
+ async function discoveryFeed(feedId,page=1){return searchResults('',page);}
+ const handlers={searchResults,extractDetails,extractChapters,extractImages,discoveryHome,discoveryFeed};globalThis.SynthetiqModule=handlers;Object.assign(globalThis,handlers);
+})();
