@@ -24,10 +24,10 @@
         "path": "modules/mangadex/icon.png",
         "sha256": "c098cf44ac13c2a5d530854eea11939a5b2d80e24abf65974dc9f87d67b286d0"
       },
-     "manifest": {
-  "path": "modules/mangadex/manifest.json",
-  "sha256": "ef04ec761297df50ff0bd51d17add8b4b0277f494115705cb5a52b87eed564a0"
-}
+      "manifest": {
+        "path": "modules/mangadex/manifest.json",
+        "sha256": "ef04ec761297df50ff0bd51d17add8b4b0277f494115705cb5a52b87eed564a0"
+      }
     }
   ]
 }
